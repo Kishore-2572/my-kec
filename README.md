@@ -1,16 +1,17 @@
 # my_kec
 
-A new Flutter project.
+A project for Kongu Engineering College to handle SAP(Students Activity Points), sending circulars and posting events.
+This project consits an website for student,staff and admin and mobile application separately for student and staff.
+This repo consists of staff mobile application.
 
-## Getting Started
+- [Website link](https://mykec.kongu.edu/)
+- [Website repo](https://mykec.kongu.edu/)
+- [Student mobile application repo](https://www.google.com)
 
-This project is a starting point for a Flutter application.
+## Staff Application
 
-A few resources to get you started if this is your first Flutter project:
+This application is fully developed in flutter with PHPmyadmin as backend. The PHP is used as similar to API request and response method.
+Additional dependancy used is mentioned in the [pubspec.yaml](https://github.com/Kishore-2572/my-kec/blob/master/pubspec.yaml) file.
+Notification service is done with the help of firebase.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
