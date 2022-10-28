@@ -6,6 +6,7 @@ import 'package:my_kec/screens/studentallactivitydetailscreen.dart';
 import 'package:my_kec/widgets/circularprogress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+
 /*
 This is All Student Sap detail screen
 It gives overview of current semester SAP details of all submitted students in a listview
@@ -34,7 +35,7 @@ class _AllStudentsSAPState extends State<AllStudentsSAP> {
     String staffId = pref.getString('staffId') as String;
     final response1 = await http
         .post(Uri.https(DOMAIN_NAME, GETSTAFFDATA), body: {'staffId': staffId});
-    // Semester need to check everytime, Because Admin changes Semester after completion 
+    // Semester need to check everytime, Because Admin changes Semester after completion
     semester = jsonDecode(response1.body)[0]['currentSemester'];
     // Get students of the logined Advisor
     String studentBatch = pref.getString('studentBatch') as String;
@@ -72,8 +73,7 @@ class _AllStudentsSAPState extends State<AllStudentsSAP> {
             child: TextField(
                 style: const TextStyle(color: Colors.black),
                 decoration: const InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black)),
+                    enabledBorder: OutlineInputBorder(),
                     suffixIconColor: Colors.black,
                     border: OutlineInputBorder(),
                     suffixIcon: Icon(Icons.search),
@@ -87,71 +87,75 @@ class _AllStudentsSAPState extends State<AllStudentsSAP> {
           )
         ],
       ),
-      body: FutureBuilder(
-          future: getstaffData(),
-          builder: (context, snapshot) {
-            //On Data Received
-            if (snapshot.hasData) {
-              List<dynamic> data = snapshot.data as List<dynamic>;
-              return RefreshIndicator(
-                onRefresh: () async {
-                  setState(() {});
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: ListView.builder(
-                      itemCount: data.length,
-                      itemBuilder: (ctx, index) {
-                        // Getting total points for Circular progress
-                        int totalScore =
-                            int.parse(data[index]['SUM(allocatedMark)']);
-                        return InkWell(
-                          //To navigate to detail screen of current semester submitted files
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) =>
-                                        StudentAllActivityDetailsScreeen(
-                                          rollNumber: data[index]
-                                              ['studentRollNumber'],
-                                          semester: semester,
-                                          pageKey: key,
-                                        ))),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: FutureBuilder(
+            future: getstaffData(),
+            builder: (context, snapshot) {
+              //On Data Received
+              if (snapshot.hasData) {
+                List<dynamic> data = snapshot.data as List<dynamic>;
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    setState(() {});
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (ctx, index) {
+                          // Getting total points for Circular progress
+                          int totalScore =
+                              int.parse(data[index]['SUM(allocatedMark)']);
+                          return InkWell(
+                              //To navigate to detail screen of current semester submitted files
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) =>
+                                          StudentAllActivityDetailsScreeen(
+                                            rollNumber: data[index]
+                                                ['studentRollNumber'],
+                                            semester: semester,
+                                            pageKey: key,
+                                          ))),
 
-                            // Render conditionally based on search string
-                            child: data[index]['studentRollNumber']
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(search.toLowerCase())
-                                ? Card(
-                                    elevation: 10,
-                                    child: SizedBox(
-                                      height: 60,
-                                      child: ListTile(
-                                        trailing: CircularProgress(
-                                            radius: 25, totalScore: totalScore),
-                                        title: Text(
-                                            data[index]['studentRollNumber']),
+                              // Render conditionally based on search string
+                              child: data[index]['studentRollNumber']
+                                      .toString()
+                                      .toLowerCase()
+                                      .contains(search.toLowerCase())
+                                  ? Card(
+                                      elevation: 10,
+                                      child: SizedBox(
+                                        height: 60,
+                                        child: ListTile(
+                                          trailing: CircularProgress(
+                                              radius: 25,
+                                              totalScore: totalScore),
+                                          title: Text(
+                                              data[index]['studentRollNumber']),
+                                        ),
                                       ),
-                                    ),
-                                  )
+                                    )
                                   //Returns empty container when Search String not found
-                                : Container());
-                      }),
-                ),
-              );
-            }
-            // For Error Handling
-            if (snapshot.hasError) {
+                                  : Container());
+                        }),
+                  ),
+                );
+              }
+              // For Error Handling
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text('Something went wrong'),
+                );
+              }
+              //On Waiting
               return const Center(
-                child: Text('Something went wrong'),
+                child: CircularProgressIndicator(),
               );
-            }
-            //On Waiting
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
+            }),
+      ),
     );
   }
 }
