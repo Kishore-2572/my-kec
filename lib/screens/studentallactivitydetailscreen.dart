@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_kec/api/apis.dart';
+import 'package:my_kec/screens/pdfviewscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,7 +21,6 @@ Addtional Packages :
     => url_launcher - Used to view pdf file
     => fluttertoast - To display the toast message
 */
-
 
 // ignore: must_be_immutable
 class StudentAllActivityDetailsScreeen extends StatefulWidget {
@@ -105,6 +105,7 @@ class _StudentAllActivityDetailsScreeenState
           );
         });
   }
+
   //To reallocate points to the particular file with its id
   void showAlert(String id) {
     showDialog(
@@ -149,6 +150,7 @@ class _StudentAllActivityDetailsScreeenState
       },
     );
   }
+
   // To calculate total score in the current semester
   int calTotalScore(list) {
     int totalScore = 0;
@@ -164,7 +166,8 @@ class _StudentAllActivityDetailsScreeenState
     var brightness = MediaQuery.of(context).platformBrightness;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.rollNumber,style:const TextStyle(color: Colors.black)),
+        title: Text(widget.rollNumber,
+            style: const TextStyle(color: Colors.black)),
       ),
       body: FutureBuilder(
         future: getDetailOfSAP(),
@@ -173,7 +176,7 @@ class _StudentAllActivityDetailsScreeenState
           if (snapshot.hasData) {
             final data = snapshot.data as List<dynamic>;
             List<dynamic> list = data;
-            //Filter based on category 
+            //Filter based on category
             if (category == 'Paper') {
               list = data
                   .where((element) => element['sapCategory'] == '1')
@@ -248,7 +251,7 @@ class _StudentAllActivityDetailsScreeenState
                     const SizedBox(child: Text('Filter  :')),
                     const Spacer(),
                     DropdownButton(
-                      //To change background color based on theme used
+                        //To change background color based on theme used
                         dropdownColor: brightness == Brightness.dark
                             ? const Color.fromARGB(255, 59, 59, 59)
                             : Colors.white,
@@ -271,53 +274,50 @@ class _StudentAllActivityDetailsScreeenState
                 ),
                 Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: ListView.builder(
-                          itemCount: list.length,
-                          itemBuilder: (ctx, index) {
-                            return Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: Colors.black,
-                                  child: Text(
-                                    list[index]['allocatedMark'],
-                                    softWrap: true,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                                title: Text(categoryList[
-                                    int.parse(list[index]['sapCategory'])]),
-                                trailing: SizedBox(
-                                  width: 120,
-                                  child: Row(
-                                    children: [
-                                      widget.pageKey == '1'
-                                          ? IconButton(
-                                              onPressed: () {
-                                                bottomsheet(list[index]['sapId']);
-                                              },
-                                              icon: const Icon(Icons.edit))
-                                          : const Spacer(),
-                                      ElevatedButton(
-                                          onPressed: () {
-                                            try {
-                                              launchUrl(Uri.parse(
-                                                  list[index]['documentLink']));
-                                            } catch (e) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(const SnackBar(
-                                                      content: Text(
-                                                          'Unable to open File')));
-                                            }
-                                          },
-                                          child: const Text('PDF')),
-                                    ],
-                                  ),
-                                ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ListView.builder(
+                      itemCount: list.length,
+                      itemBuilder: (ctx, index) {
+                        return Card(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.black,
+                              child: Text(
+                                list[index]['allocatedMark'],
+                                softWrap: true,
+                                style: const TextStyle(color: Colors.white),
                               ),
-                            );
-                          }),
-                    ))
+                            ),
+                            title: Text(list[index]['documentTitle']),
+                            trailing: SizedBox(
+                              width: 120,
+                              child: Row(
+                                children: [
+                                  widget.pageKey == '1'
+                                      ? IconButton(
+                                          onPressed: () {
+                                            bottomsheet(list[index]['sapId']);
+                                          },
+                                          icon: const Icon(Icons.edit))
+                                      : const Spacer(),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PDFViewScreen(
+                                                        sapid: list[index]
+                                                            ['sapId'])));
+                                      },
+                                      child: const Text('PDF')),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                ))
               ],
             );
           }

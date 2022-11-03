@@ -48,12 +48,6 @@ class _SapScreenState extends State<SapScreen> {
   }
 
   @override
-  void dispose() {
-    FocusScope.of(context).unfocus();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (() => FocusScope.of(context).requestFocus(FocusNode())),
@@ -100,7 +94,6 @@ class _SapScreenState extends State<SapScreen> {
                     if (ss.hasData) {
                       final list = ss.data as List<dynamic>;
                       Map<String, int> data = {};
-                      print(list);
                       // To get the count of number files submitted by the roll number
                       //store in above map data
                       for (var i in list) {

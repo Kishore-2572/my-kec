@@ -17,7 +17,7 @@ void main() async {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.cyan,
+        primarySwatch: Colors.blue,
       ),
       darkTheme: AppTheme.darkTheme,
       home: const Mysplash()));
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
       carPlay: false,
       criticalAlert: false,
       provisional: false,
-      sound: true,
+      sound: true ,
     );
     messaging.subscribeToTopic('circular');
   }

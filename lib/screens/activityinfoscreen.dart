@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:my_kec/screens/pdfviewscreen.dart';
+import 'package:my_kec/widgets/similarsapdetail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../api/apis.dart';
@@ -15,6 +17,7 @@ Addtional Packages :
     => http   - Used for getting data from PHP backend
     =>url_launcher  - To view the Pdf file
 */
+// ignore: must_be_immutable
 class ActivityInfoScreen extends StatefulWidget {
   String rollNumber;
   ActivityInfoScreen({Key? key, required this.rollNumber}) : super(key: key);
@@ -39,10 +42,11 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
     'Entrepreneurship',
     'Social Activities'
   ];
+  List<bool> showsimilar = [];
 
   // Function for get SAP details of waiting queue
   Future<List<dynamic>> getSAPDetail() async {
-    final pref =await SharedPreferences.getInstance();
+    final pref = await SharedPreferences.getInstance();
     String staffId = pref.getString('staffId') as String;
 
     // Semester need to check everytime, Because Admin changes Semester after completion of each semester
@@ -52,8 +56,11 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
     // TO get the year of Student batch
     String batch = "20${widget.rollNumber.substring(0, 2)}";
     final response = await http.post(Uri.https(DOMAIN_NAME, GETSAPDETAIL),
-        body: {'rollNumber': widget.rollNumber, 'studentBatch': batch,'semester':semester});
-
+        body: {
+          'rollNumber': widget.rollNumber,
+          'studentBatch': batch,
+          'semester': semester
+        });
     return jsonDecode(response.body);
   }
 
@@ -84,13 +91,17 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                       : '2' // 1 - Accepted,  2 - rejected
                 });
                 if (response.body.contains('Success')) {
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Point Allocation successfull')));
                 } else {
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Something Gone wrong')));
                 }
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
               },
             ),
@@ -106,6 +117,7 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
     );
   }
 
+  //Function for Converting 24hrs format to 12hrs
   String twelveHourVal(String inputString) {
     var splitTime = inputString.split(":");
     int hour = int.parse(splitTime[0]);
@@ -138,7 +150,12 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
             future: getSAPDetail(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                final data = snapshot.data as List<dynamic>;
+                var data = snapshot.data as List<dynamic>;
+                List<dynamic> list = data;
+                data = data.where((element) {
+                  showsimilar.add(false);
+                  return element['stateOfProcess'] == "0";
+                }).toList();
                 return ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (ctx, index) {
@@ -148,6 +165,7 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                       // To initialize the expected mark of Student in the
                       final tc = TextEditingController(
                           text: data[index]['expectedMark']);
+
                       return Card(
                         elevation: 20,
                         margin: const EdgeInsets.symmetric(
@@ -171,16 +189,54 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                                       data[index]['sapCategory'] == '3'
                                   ? SizedBox(
                                       child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           //To display the organizer of the Event
-                                          Text(
-                                              'Organizer : ${data[index]['documentTitle']}'),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Organizer :',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(
+                                                    '\t\t\t\t${data[index]['organiser']}',
+                                                    overflow:
+                                                        TextOverflow.clip),
+                                              ],
+                                            ),
+                                          ),
                                           const SizedBox(
                                             width: 20,
                                           ),
                                           // To display Prize won or not
-                                          Text(
-                                              'PrizeWon : ${data[index]['prizeWon'].toString() == '0' ? 'Participated' : 'Yes'}'),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.3,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                const Text('PrizeWon :',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text(
+                                                    '\t\t\t\t${data[index]['prizeWon'].toString() == '0' ? 'Participated' : 'Yes'}'),
+                                              ],
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     )
@@ -313,16 +369,13 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                                       child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(),
                                           onPressed: () {
-                                            try {
-                                              launchUrl(Uri.parse(data[index]
-                                                      ['documentLink']
-                                                  .toString()));
-                                            } catch (e) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(const SnackBar(
-                                                      content: Text(
-                                                          'Unable to open File')));
-                                            }
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PDFViewScreen(
+                                                            sapid: data[index]
+                                                                ['sapId'])));
                                           },
                                           child: const Text(
                                             'View PDF',
@@ -331,7 +384,22 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                                     ),
                                   ],
                                 ),
-                              )
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      showsimilar[index] = !showsimilar[index];
+                                    });
+                                  },
+                                  child: const Text('show similar',
+                                      style: TextStyle(fontSize: 20))),
+                              if (showsimilar[index])
+                                SimilarSapDetail(
+                                  sapid: data[index]['sapId'],
+                                  sapCategory: data[index]['sapCategory'],
+                                  organiser: data[index]['organiser'],
+                                  saplist: list,
+                                ),
                             ],
                           ),
                         ),

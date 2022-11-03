@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 
 
@@ -23,7 +24,7 @@ class AppTheme {
       prefixIconColor: Colors.white,
     ),
     appBarTheme: const AppBarTheme(
-      color: Colors.cyan,
+      color: Colors.blue,
       iconTheme: IconThemeData(
         color: Colors.black,
       ),

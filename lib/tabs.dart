@@ -34,7 +34,7 @@ class _TabScreenState extends State<TabScreen> {
     super.initState();
   }
 
-  //To get the staff designation 
+  //To get the staff designation
   Future<void> getData() async {
     final pref = await SharedPreferences.getInstance();
     designation = pref.getString('designation');
@@ -42,10 +42,12 @@ class _TabScreenState extends State<TabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_pageList[_selectedIndex]['title'] as String,style:const TextStyle(color: Colors.black)),
-        //Render conditionally based on designation 
+        title: Text(_pageList[_selectedIndex]['title'] as String,
+            style: const TextStyle(color: Colors.black)),
+        //Render conditionally based on designation
         //If Class Advisor 3 Screens also rendered else only home page will be shown
         actions: designation == '1'
             ? _selectedIndex == 2
@@ -70,32 +72,52 @@ class _TabScreenState extends State<TabScreen> {
       bottomNavigationBar: FutureBuilder(
           future: getData(),
           builder: (ctx, ss) {
-            
             return designation == '1'
-                ? CurvedNavigationBar(
-                    index: 1,
-                    color: Colors.cyan,
-                    buttonBackgroundColor:
-                        const Color.fromARGB(255, 54, 193, 228),
-                    backgroundColor: Colors.transparent,
-                    height: 50,
-                    animationDuration: const Duration(milliseconds: 200),
-                    animationCurve: Curves.easeInCirc,
-                    items: const [
-                      Icon(Icons.card_membership,color: Colors.black,),
-                      Icon(Icons.home,color: Colors.black,),
-                      Icon(Icons.account_circle,color: Colors.black),
-                    ],
-                    onTap: (i) {
-                      setState(() {
-                        _selectedIndex = i;
-                      });
-                    },
+                ? Container(
+                    decoration: Brightness.dark == brightness
+                        ? const BoxDecoration(
+                            border: Border(
+                                top: BorderSide(
+                                    width: 2.0,
+                                    color: Color.fromARGB(255, 58, 59, 59))))
+                        : null,
+                    child: CurvedNavigationBar(
+                      index: 1,
+                      color: Brightness.dark == brightness
+                          ? const Color.fromARGB(255, 33, 33, 33)
+                          : Colors.blue,
+                      buttonBackgroundColor: Colors.blue,
+                      backgroundColor: Colors.transparent,
+                      height: 50,
+                      animationDuration: const Duration(milliseconds: 200),
+                      animationCurve: Curves.easeInCirc,
+                      items: [
+                        Icon(
+                          Icons.card_membership,
+                          color: Brightness.dark == brightness
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                        Icon(
+                          Icons.home,
+                          color: Brightness.dark == brightness
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                        Icon(Icons.account_circle,
+                            color: Brightness.dark == brightness
+                                ? Colors.white
+                                : Colors.black),
+                      ],
+                      onTap: (i) {
+                        setState(() {
+                          _selectedIndex = i;
+                        });
+                      },
+                    ),
                   )
                 : const SizedBox(height: 10);
           }),
     );
   }
 }
-
-

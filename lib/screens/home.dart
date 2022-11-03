@@ -11,10 +11,10 @@ import '../widgets/eventview.dart';
 /*
 This is the Home page of the app
 Here there are two Widgets 
-    => EventsView=> http   - Used for getting data data from PHP backend
+    => EventsView
     => CircularView
 Addtional Packages :
-    
+    => http   - Used for getting data data from PHP backend
 
 */
 
