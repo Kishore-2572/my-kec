@@ -72,6 +72,7 @@ class _LoginandSignupState extends State<LoginandSignup> {
 
   //To handle error to user response
   void _showErrorDialog(String msg) {
+    var brightness = MediaQuery.of(context).platformBrightness;
     showDialog(
         context: context,
         builder: (c) => AlertDialog(
@@ -79,6 +80,9 @@ class _LoginandSignupState extends State<LoginandSignup> {
                 'An Error has occured',
                 style: TextStyle(color: Colors.orange),
               ),
+              backgroundColor: brightness == Brightness.dark
+                  ? const Color.fromARGB(255, 33, 33, 33)
+                  : Colors.white,
               content: Text(msg),
               actions: [
                 TextButton(

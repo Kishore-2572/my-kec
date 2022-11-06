@@ -72,8 +72,15 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        var brightness = MediaQuery.of(context).platformBrightness;
         return AlertDialog(
-          title: const Text('Alert'),
+          title: const Text(
+            'Alert',
+            style: TextStyle(color: Colors.orange),
+          ),
+          backgroundColor: brightness == Brightness.dark
+              ? const Color.fromARGB(255, 33, 33, 33)
+              : Colors.white,
           content: Text("Are You Sure Want To $theme ?"),
           actions: <Widget>[
             ElevatedButton(
