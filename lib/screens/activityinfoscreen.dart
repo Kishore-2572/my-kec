@@ -123,20 +123,6 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
       },
     );
   }
-
-  //Function for Converting 24hrs format to 12hrs
-  String twelveHourVal(String inputString) {
-    var splitTime = inputString.split(":");
-    int hour = int.parse(splitTime[0]);
-    String suffix = "am";
-    if (hour >= 12) {
-      hour -= 12;
-      suffix = "pm";
-    }
-    String twelveHourVal = '$hour:${splitTime[1]} $suffix';
-    return twelveHourVal;
-  }
-
   // To unfocus the keypad in the app
   @override
   void dispose() {
@@ -166,9 +152,6 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                 return ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (ctx, index) {
-                      String time = twelveHourVal(DateFormat('hh:mm').format(
-                          DateTime.parse(
-                              data[index]['TimeOfUpload'].toString())));
                       // To initialize the expected mark of Student in the
                       final tc = TextEditingController(
                           text: data[index]['expectedMark']);
@@ -285,7 +268,9 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                                               DateTime.parse(data[index]
                                                       ['TimeOfUpload']
                                                   .toString()))),
-                                          Text(time)
+                                          Text(DateFormat.jm().format(
+                          DateTime.parse(
+                              data[index]['TimeOfUpload'].toString())))
                                         ],
                                       ),
                                     ),
