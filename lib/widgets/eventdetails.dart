@@ -97,8 +97,18 @@ class EventDetail extends StatelessWidget {
                   }),
             ),
             const SizedBox(
-              height: 300,
-            )
+              height: 30,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  try {
+                    launchUrl(Uri.parse(event['eventLink']));
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Something gone wrong')));
+                  }
+                },
+                child: const Text("View"))
           ],
         ),
       )
