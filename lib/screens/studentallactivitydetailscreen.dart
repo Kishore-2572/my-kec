@@ -227,7 +227,7 @@ class _StudentAllActivityDetailsScreeenState
                   .toList();
             }
             int totalScore = calTotalScore(list);
-            int divisor = 100;
+            int divisor = 80;
             // To set Max point for Selected category
             if (category == 'Techno Managerial' || category == 'Paper') {
               divisor = 75;
@@ -235,7 +235,7 @@ class _StudentAllActivityDetailsScreeenState
                 category == 'Social Activities') {
               divisor = 50;
             } else {
-              divisor = 100;
+              divisor = 80;
             }
             return Column(
               children: [

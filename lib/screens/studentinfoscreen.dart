@@ -14,7 +14,6 @@ Addtional Packages :
     => http   - Used for getting data data from PHP backend
 */
 
-
 // ignore: must_be_immutable
 class StudentInfoScreen extends StatelessWidget {
   String rollNumber;
@@ -62,7 +61,7 @@ class StudentInfoScreen extends StatelessWidget {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                    height: MediaQuery.of(context).size.height * 0.85,
+                    height: MediaQuery.of(context).size.height * 0.80,
                     child: ListView.builder(
                         itemCount: data['sapDetail'].length,
                         itemBuilder: (ctx, index) {
@@ -87,16 +86,16 @@ class StudentInfoScreen extends StatelessWidget {
                               child: ListTile(
                                 trailing: CircularPercentIndicator(
                                   radius: 25,
-                                  // If total score > 100 percent indicator will fit to 1 else factorize with 100 to fill the circle
+                                  // If total score > 80 percent indicator will fit to 1 else factorize with 80 to fill the circle
                                   percent:
-                                      totalScore > 100 ? 1 : totalScore / 100,
+                                      totalScore > 80 ? 1 : totalScore / 80,
                                   center: Text('$totalScore'),
                                   progressColor: Colors.green,
                                   backgroundColor:
                                       const Color.fromARGB(255, 223, 212, 212),
                                   circularStrokeCap: CircularStrokeCap.round,
                                 ),
-                                //To indicate the semester 
+                                //To indicate the semester
                                 title: Text(
                                     'Semester  :  ${data['sapDetail'][index]['semester']}'),
                               ),
