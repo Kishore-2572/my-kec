@@ -5,8 +5,6 @@ This project consits an website for student,staff and admin and mobile applicati
 This repo consists of staff mobile application.
 
 - [Website link](https://mykec.kongu.edu/)
-- [Website repo](https://mykec.kongu.edu/)
-- [Student mobile application repo](https://www.google.com)
 
 ## Staff Application
 
